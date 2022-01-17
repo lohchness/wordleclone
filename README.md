@@ -1,2 +1,2 @@
 # wordleclone
-Clone of Wordle word game
+This game is a clone of Wordle, which is based off Mastermind, which is based off Bulls and Cows.
