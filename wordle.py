@@ -1,4 +1,5 @@
-import pygame, sys
+from multiprocessing.context import assert_spawning
+import pygame, sys, random
 
 pygame.init()
 pygame.display.set_caption("Wordle Clone")
@@ -15,7 +16,7 @@ COLOR_CORRECT = (0, 185, 6)
 
 NUM_ROWS = 6
 NUM_COLS = 5
-LETTER_LIMIT = NUM_COLS
+LETTER_LENGTH = NUM_COLS
 RECT_WIDTH = 50
 RECT_HEIGHT = 50
 # Pixels between each Rect
@@ -30,10 +31,18 @@ BASE_OFFSET_Y = (HEIGHT/2)-((NUM_ROWS/2)*DY)-((NUM_ROWS/2)*RECT_HEIGHT)+(((NUM_R
 def main():
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 65)
+    used_words = []
     curr_word = ""
     word_count = 0
     curr_letter = 0
     rects = []
+    flag_win = False
+    flag_lose = False
+
+    guess_word = word = random.choice(list(open("wordlist.txt"))).replace("\n", "")
+    # guess_word = "proxy"
+    assert(len(guess_word) == LETTER_LENGTH)
+    assert(guess_word.islower())
 
     while True:
         for event in pygame.event.get():
@@ -41,18 +50,27 @@ def main():
                 pygame.quit()
                 sys.exit()
             
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_BACKSPACE:
-                    # Prevents IndexErrors
-                    if curr_word: 
-                        curr_word = curr_word[:-1]
-                        curr_letter -= 1
-                elif event.key == pygame.K_RETURN:
-                    continue
-                else:
-                    if len(curr_word) < LETTER_LIMIT:
-                        curr_word += event.unicode.upper()
-                        curr_letter += 1
+            if flag_win or flag_lose:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        main()
+            else:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE:
+                        # Prevents IndexErrors
+                        if curr_word: 
+                            curr_word = curr_word[:-1]
+                            curr_letter -= 1
+                    elif event.key == pygame.K_RETURN:
+                        if len(curr_word) == 5:
+                            word_count += 1
+                            used_words.append(curr_word)
+                            curr_word = ""
+                            curr_letter = 0
+                    else:
+                        if len(curr_word) < LETTER_LENGTH:
+                            curr_word += event.unicode.upper()
+                            curr_letter += 1
 
         SCREEN.fill(DARK_GREY)
         
@@ -67,16 +85,54 @@ def main():
                 row_rects.append((x_pos, y_pos))
             rects.append(row_rects)
 
+        # Blits each letter of the current word the user is typing.
+        # Firstly renders each letter, then blits it on the appropriate rectangle according to which letter it is.
         if curr_word:
-            for letter_index in range(curr_letter):
+            for letter_index in range(len(curr_word)):
                 word_surface = font.render(curr_word[letter_index], True, WHITE)
                 # [0] represents X coord, [1] Y.
                 SCREEN.blit(word_surface, (rects[word_count][letter_index][0]+X_PADDING, rects[word_count][letter_index][1]+Y_PADDING))
 
+        # Renders all past words if available, using similar steps as above block
+        if used_words:
+            # Renders colors for the squares that the past words' letters are sitting on
+            for word in range(len(used_words)):
+                num_correct = 0
+                # Each iteration of each word in used_words, make a list of remaining letters.
+                # Used to make sure that letters that appear more than once don't get counted if that letter appears in guess_word only once.
+                # EG: guess_word = "proxy", word = "droop", and 'o' appears more than once. The second 'o' in droop does not get counted.
+                remaining_letters = list(guess_word)
+                for letter in range(LETTER_LENGTH):
+                    curr_rect = pygame.Rect((rects[word][letter][0], rects[word][letter][1]), (RECT_WIDTH, RECT_HEIGHT))
+                    # Incorrect letter
+                    if used_words[word][letter].lower() not in remaining_letters:
+                        pygame.draw.rect(SCREEN,COLOR_INCORRECT,curr_rect)
+                    # Letter in word, but incorrect position
+                    if used_words[word][letter].lower() in remaining_letters:
+                        pygame.draw.rect(SCREEN,COLOR_MISPLACED,curr_rect)
+                        # Multi-letter functionality (read above)
+                        remaining_letters.remove(used_words[word][letter].lower())
+                    # Correct letter
+                    if used_words[word][letter].lower() == guess_word[letter]:
+                        pygame.draw.rect(SCREEN,COLOR_CORRECT,curr_rect)
+                        num_correct += 1
+
+                if num_correct == 5:
+                    flag_win = True
+                elif len(used_words) == NUM_ROWS:
+                    flag_lose = True
+
+            # Renders letters of the word
+            for word in range(len(used_words)):
+                for letter in range(LETTER_LENGTH):
+                    letter_surface = font.render(used_words[word][letter], True, WHITE)
+                    SCREEN.blit(letter_surface, (rects[word][letter][0]+X_PADDING, rects[word][letter][1]+Y_PADDING))
+        
+
+
         pygame.display.update()
         clock.tick(FPS)
 
+
 if __name__ == "__main__":
-    print(BASE_OFFSET_X)
-    print(BASE_OFFSET_Y)
     main()
