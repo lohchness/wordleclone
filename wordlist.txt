@@ -1230,7 +1230,6 @@ drape
 drawl
 drawn
 draws
-drays
 dread
 dream
 dreck
@@ -2499,3 +2498,19 @@ yummy
 zones
 zesty
 zebra
+skate
+scorn
+splat
+stomp
+tarot
+spies
+stave
+naive
+tease
+chink
+spasm
+guile
+plead
+spade
+rover
+spear
