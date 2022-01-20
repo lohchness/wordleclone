@@ -46,7 +46,6 @@ def main():
     timer_flag_2 = 0
     wordlist = [word.replace("\n","") for word in list(open("wordlist.txt"))]
     guess_word = random.choice(wordlist)
-    # guess_word = "stake"
     assert(len(guess_word) == LETTER_LENGTH)
     assert(guess_word.islower())
 
@@ -87,13 +86,10 @@ def main():
                             if event.unicode.isalpha():
                                 curr_word += event.unicode.upper()
                                 curr_letter += 1
-
+          
         SCREEN.fill(DARK_GREY)
-        
         # Draw title and underline
         draw_title(letter_font)
-        SCREEN.blit(letter_font.render(guess_word, True, WHITE), (10, 10))
-
         # Draws base 5x6 grid for letters
         for y in range(NUM_ROWS):
             row_rects = []  
@@ -109,7 +105,6 @@ def main():
         if flag_invalid_word:
             timer_flag_2 = 0
             flag_not_enough_letters = False
-
             text_surface = text.render("Not in word list", True, RED)
             # Should be about center aligned. Use of magic numbers, but not serious.
             x_pos = BASE_OFFSET_X + (RECT_WIDTH * (NUM_COLS/5))
@@ -119,13 +114,11 @@ def main():
         if flag_not_enough_letters:
             timer_flag_1 = 0
             flag_invalid_word = False
-
             text_surface = text.render("Not enough letters", True, RED)
             x_pos = BASE_OFFSET_X + (RECT_WIDTH * (NUM_COLS/10))
             y_pos = BASE_OFFSET_Y - (DY*4)
             SCREEN.blit(text_surface, (x_pos, y_pos))
             timer_flag_2 += 1
-
         if timer_flag_1 == TEXT_TIMER * FPS:
             flag_invalid_word = False
             timer_flag_1 = 0
@@ -133,9 +126,7 @@ def main():
             flag_not_enough_letters = False
             timer_flag_2 = 0
 
-        
-
-        # Blits each letter of the current word the user is typing.
+        # Blits each letter of the current word the user is currently typing.
         # Firstly renders each letter, then blits it on the appropriate rectangle according to which letter it is.
         if curr_word:
             for letter_index in range(len(curr_word)):
@@ -143,7 +134,7 @@ def main():
                 # [0] represents X coord, [1] Y.
                 SCREEN.blit(word_surface, (rects[word_count][letter_index][0]+X_PADDING, rects[word_count][letter_index][1]+Y_PADDING))
 
-
+        # Renders letters and rects of words already inputted by player.
         if used_words:
             for word_index in range(len(used_words)):
                 remaining_letters = list(guess_word)
@@ -180,7 +171,7 @@ def main():
                 if num_correct == 5:
                     flag_win = True
                 elif len(used_words) == NUM_ROWS:
-                    flag_lose = True
+                    flag_lose = True  
 
         pygame.display.update()
         clock.tick(FPS)
