@@ -11,3 +11,4 @@ Some ideas planned, but not sure if I want to work on them at the moment:
  - Stat tracking
 
 # Video Example
+[![Video Example](http://img.youtube.com/vi/fsyIQ7oy4tY.jpg)](http://www.youtube.com/watch?v=fsyIQ7oy4tY " Wordle Clone Video Example ")
