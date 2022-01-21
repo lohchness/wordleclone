@@ -45,7 +45,8 @@ def main():
     timer_flag_1 = 0
     timer_flag_2 = 0
     wordlist = [word.replace("\n","") for word in list(open("wordlist.txt"))]
-    guess_word = random.choice(wordlist)
+    # guess_word = random.choice(wordlist)
+    guess_word = "beast"
     assert(len(guess_word) == LETTER_LENGTH)
     assert(guess_word.islower())
 
@@ -125,6 +126,17 @@ def main():
         if timer_flag_2 == TEXT_TIMER * FPS:
             flag_not_enough_letters = False
             timer_flag_2 = 0
+
+        if flag_win:
+            text_surface = text.render("Correct! Press 'R' to play again", True, WHITE)
+            x_pos = BASE_OFFSET_X - (RECT_WIDTH * (NUM_COLS/5))
+            y_pos = BASE_OFFSET_Y + (DY*7) + (RECT_HEIGHT * NUM_ROWS)
+            SCREEN.blit(text_surface, (x_pos, y_pos))
+        if flag_lose:
+            text_surface = text.render("Try again! Press 'R' to play again", True, WHITE)
+            x_pos = BASE_OFFSET_X - (RECT_WIDTH * (NUM_COLS/5))
+            y_pos = BASE_OFFSET_Y + (DY*7) + (RECT_HEIGHT * NUM_ROWS)
+            SCREEN.blit(text_surface, (x_pos, y_pos))
 
         # Blits each letter of the current word the user is currently typing.
         # Firstly renders each letter, then blits it on the appropriate rectangle according to which letter it is.

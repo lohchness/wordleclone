@@ -1087,10 +1087,7 @@ deers
 defer
 deify
 deign
-deism
-deist
 deity
-dekes
 delay
 delft
 delis
@@ -1111,9 +1108,6 @@ deter
 detox
 deuce
 devil
-dewar
-dhikr
-dhows
 dials
 diary
 diced
@@ -1142,7 +1136,6 @@ dinky
 dinos
 diode
 dippy
-direr
 dirge
 dirty
 disco
