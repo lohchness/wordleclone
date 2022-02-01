@@ -45,8 +45,7 @@ def main():
     timer_flag_1 = 0
     timer_flag_2 = 0
     wordlist = [word.replace("\n","") for word in list(open("wordlist.txt"))]
-    # guess_word = random.choice(wordlist)
-    guess_word = "beast"
+    guess_word = random.choice(wordlist)
     assert(len(guess_word) == LETTER_LENGTH)
     assert(guess_word.islower())
 
